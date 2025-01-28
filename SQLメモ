@@ -1,0 +1,16 @@
+2025.1.13
+INSERT INTO public.teams(
+	id, name, location, created_at, updated_at)
+	VALUES ('001', '関西学院大学', '関西', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO public.teams(
+	id, name, location, created_at, updated_at)
+	VALUES ('002', '神戸大学', '関西', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT INTO public.matches(
+	id, home_team_id, away_team_id, match_date, location, created_at, updated_at)
+	VALUES ('111', '001', '002', CURRENT_TIMESTAMP, 'HOME', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+select * from public.matches
+
+commit;
