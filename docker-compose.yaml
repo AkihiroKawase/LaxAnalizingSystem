@@ -1,0 +1,56 @@
+name: lax_project
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      args:
+       - DATABASE_URL=${DATABASE_URL}  
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app/backend
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend/lax-analizing-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com     # 初期ログイン用メールアドレス
+      PGADMIN_DEFAULT_PASSWORD: admin              # 初期ログイン用パスワード
+    ports:
+      - "8080:80"                                  # ホストのポート8080をPGAdminのポート80にマッピング
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+  pgadmin_data:
